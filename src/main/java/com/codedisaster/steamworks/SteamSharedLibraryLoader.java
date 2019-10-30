@@ -4,30 +4,8 @@ import java.io.*;
 import java.util.*;
 
 class SteamSharedLibraryLoader{
-
-    enum PLATFORM{
-        Windows,
-        Linux,
-        MacOS
-    }
-
     private static final PLATFORM OS;
     private static final boolean IS_64_BIT;
-
-    private static final String SHARED_LIBRARY_EXTRACT_DIRECTORY = System.getProperty(
-    "com.codedisaster.steamworks.SharedLibraryExtractDirectory", "steamworks4j");
-
-    private static final String SHARED_LIBRARY_EXTRACT_PATH = System.getProperty(
-    "com.codedisaster.steamworks.SharedLibraryExtractPath", null);
-
-    private static final String SDK_REDISTRIBUTABLE_BIN_PATH = System.getProperty(
-    "com.codedisaster.steamworks.SDKRedistributableBinPath", "sdk/redistributable_bin");
-
-    private static final String SDK_LIBRARY_PATH = System.getProperty(
-    "com.codedisaster.steamworks.SDKLibraryPath", "sdk/public/steam/lib");
-
-    static final boolean DEBUG = Boolean.parseBoolean(System.getProperty(
-    "com.codedisaster.steamworks.Debug", "false"));
 
     static{
         String osName = System.getProperty("os.name");
@@ -46,10 +24,10 @@ class SteamSharedLibraryLoader{
         IS_64_BIT = osArch.equals("amd64") || osArch.equals("x86_64");
     }
 
-    private static String getPlatformLibName(String libName){
+    private static String getPlatformLibName(String libName, boolean use64){
         switch(OS){
             case Windows:
-                return libName + (IS_64_BIT ? "64" : "") + ".dll";
+                return libName + (IS_64_BIT && use64 ? "64" : "") + ".dll";
             case Linux:
                 return "lib" + libName + ".so";
             case MacOS:
@@ -59,156 +37,95 @@ class SteamSharedLibraryLoader{
         throw new RuntimeException("Unknown host architecture");
     }
 
-    static String getSdkRedistributableBinPath(){
-        File path;
-        switch(OS){
-            case Windows:
-                path = new File(SDK_REDISTRIBUTABLE_BIN_PATH, IS_64_BIT ? "win64" : "");
-                break;
-            case Linux:
-                path = new File(SDK_REDISTRIBUTABLE_BIN_PATH, "linux64");
-                break;
-            case MacOS:
-                path = new File(SDK_REDISTRIBUTABLE_BIN_PATH, "osx32");
-                break;
-            default:
-                return null;
-        }
-
-        return path.exists() ? path.getPath() : null;
-    }
-
-    static String getSdkLibraryPath(){
-        File path;
-        switch(OS){
-            case Windows:
-                path = new File(SDK_LIBRARY_PATH, IS_64_BIT ? "win64" : "win32");
-                break;
-            case Linux:
-                path = new File(SDK_LIBRARY_PATH, "linux64");
-                break;
-            case MacOS:
-                path = new File(SDK_LIBRARY_PATH, "osx32");
-                break;
-            default:
-                return null;
-        }
-
-        return path.exists() ? path.getPath() : null;
-    }
-
-    static void loadLibrary(String libraryName, String libraryPath) throws SteamException{
-        try{
-            String librarySystemName = getPlatformLibName(libraryName);
-
-            File librarySystemPath = discoverExtractLocation(
-            SHARED_LIBRARY_EXTRACT_DIRECTORY + "/" + Steamworks4jVersion.getVersion(), librarySystemName);
-
-            if(libraryPath == null){
-                // extract library from resource
-                extractLibrary(librarySystemPath, librarySystemName);
-            }else{
-                // read library from given path
-                File librarySourcePath = new File(libraryPath, librarySystemName);
-
-                if(OS != PLATFORM.Windows){
-                    // on MacOS & Linux, "extract" (copy) from source location
-                    extractLibrary(librarySystemPath, librarySourcePath);
-                }else{
-                    // on Windows, load the library from the source location
-                    librarySystemPath = librarySourcePath;
+    static void loadLibrary(String... libraryNames) throws SteamException{
+        Throwable firstException = null;
+        for(File file : extractLocations("steamworks4j_" + Steamworks4j.version, "out")){
+            if(canWrite(file)){
+                try{
+                    //try to extract and load each file
+                    loadAllLibraries(file, true, libraryNames);
+                    return;
+                }catch(Throwable t){
+                    firstException = t;
+                    //'non-valid win32 application' error
+                    if(t.getMessage() != null && t.getMessage().contains("Win32")){
+                        //try to load them again, but this time in 32-bit mode
+                        try{
+                            loadAllLibraries(file, false, libraryNames);
+                            return;
+                        }catch(Throwable ignored){
+                            //didn't work, keep trying
+                        }
+                    }
+                    //TODO handle 32-bit errors.
                 }
             }
+        }
 
-            String absolutePath = librarySystemPath.getCanonicalPath();
-            System.load(absolutePath);
-        }catch(IOException e){
-            throw new SteamException(e);
+        if(firstException != null){
+            throw new SteamException(firstException);
         }
     }
 
-    private static void extractLibrary(File librarySystemPath, String librarySystemName) throws IOException{
-        extractLibrary(librarySystemPath,
-        SteamSharedLibraryLoader.class.getResourceAsStream("/" + librarySystemName));
+    private static void loadAllLibraries(File file, boolean use64, String... libraryNames) throws Throwable{
+        for(String lib : libraryNames){
+            String libFilename = getPlatformLibName(lib, use64);
+            File libFile = new File(file.getParentFile(), libFilename);
+            extractLibrary(libFile, libFilename);
+            System.load(libFile.getCanonicalPath());
+        }
     }
 
-    private static void extractLibrary(File librarySystemPath, File librarySourcePath) throws IOException{
-        extractLibrary(librarySystemPath, new FileInputStream(librarySourcePath));
+    private static File[] extractLocations(String folderName, String fileName){
+        ArrayList<File> out = new ArrayList<>();
+
+        out.add(new File(System.getProperty("java.io.tmpdir") + "/" + folderName, fileName));
+
+        try{
+            File file = File.createTempFile(folderName, null);
+            if(file.delete()){
+                out.add(new File(file, fileName));
+            }
+        }catch(IOException ignored){}
+
+        out.add(new File(System.getProperty("user.home") + "/." + folderName, fileName));
+        out.add(new File(".tmp/" + folderName, fileName));
+        out.add(new File(fileName));
+
+        return out.toArray(new File[0]);
     }
 
-    private static void extractLibrary(File librarySystemPath, InputStream input) throws IOException{
+    private static void extractLibrary(File destination, String fileName) throws IOException{
+        InputStream input = SteamSharedLibraryLoader.class.getResourceAsStream("/" + fileName);
+
         if(input != null){
-            try(FileOutputStream output = new FileOutputStream(librarySystemPath)){
+            try(FileOutputStream output = new FileOutputStream(destination)){
                 byte[] buffer = new byte[4096];
                 while(true){
                     int length = input.read(buffer);
                     if(length == -1) break;
                     output.write(buffer, 0, length);
                 }
-                output.close();
             }catch(IOException e){
-				/*
-					Extracting the library may fail, for example because 'nativeFile' already exists and is in
-					use by another process. In this case, we fail silently and just try to load the existing file.
-				 */
-                if(!librarySystemPath.exists()){
+                //Extracting the library may fail, for example because 'nativeFile' already exists and is inuse by another process.
+                //In this case, we fail silently and just try to load the existing file.
+                if(!destination.exists()){
                     throw e;
                 }
             }finally{
                 input.close();
             }
         }else{
-            throw new IOException("Failed to read input stream for " + librarySystemPath.getCanonicalPath());
+            throw new IOException("Failed to read input stream for " + destination.getCanonicalPath());
         }
     }
 
     private static File discoverExtractLocation(String folderName, String fileName) throws IOException{
-
-        File path;
-
-        // system property
-
-        if(SHARED_LIBRARY_EXTRACT_PATH != null){
-            path = new File(SHARED_LIBRARY_EXTRACT_PATH, fileName);
-            if(canWrite(path)){
-                return path;
+        File[] paths = extractLocations(folderName, fileName);
+        for(File file : paths){
+            if(canWrite(file)){
+                return file;
             }
-        }
-
-        // Java tmpdir
-
-        path = new File(System.getProperty("java.io.tmpdir") + "/" + folderName, fileName);
-        if(canWrite(path)){
-            return path;
-        }
-
-        // NIO temp file
-
-        try{
-            File file = File.createTempFile(folderName, null);
-            if(file.delete()){
-                // uses temp file path as destination folder
-                path = new File(file, fileName);
-                if(canWrite(path)){
-                    return path;
-                }
-            }
-        }catch(IOException ignored){
-
-        }
-
-        // user home
-
-        path = new File(System.getProperty("user.home") + "/." + folderName, fileName);
-        if(canWrite(path)){
-            return path;
-        }
-
-        // working directory
-
-        path = new File(".tmp/" + folderName, fileName);
-        if(canWrite(path)){
-            return path;
         }
 
         throw new IOException("No suitable extraction path found");
@@ -246,7 +163,6 @@ class SteamSharedLibraryLoader{
     }
 
     private static boolean canExecute(File file){
-
         try{
             if(file.canExecute()){
                 return true;
@@ -260,6 +176,12 @@ class SteamSharedLibraryLoader{
         }
 
         return false;
+    }
+
+    enum PLATFORM{
+        Windows,
+        Linux,
+        MacOS
     }
 
 }

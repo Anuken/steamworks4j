@@ -3,28 +3,17 @@ package com.codedisaster.steamworks;
 import java.io.*;
 
 public class SteamAPI{
-
     private static boolean isRunning = false;
     private static boolean isNativeAPILoaded = false;
 
+
     public static void loadLibraries() throws SteamException{
-        loadLibraries(null);
-    }
-
-    public static void loadLibraries(String libraryPath) throws SteamException{
-
         if(isNativeAPILoaded){
             return;
         }
 
-        if(libraryPath == null && SteamSharedLibraryLoader.DEBUG){
-            String sdkPath = SteamSharedLibraryLoader.getSdkRedistributableBinPath();
-            //SteamSharedLibraryLoader.loadLibrary("steam_api", sdkPath);
-        }else{
-            //SteamSharedLibraryLoader.loadLibrary("steam_api", libraryPath);
-        }
-
-        SteamSharedLibraryLoader.loadLibrary("steamworks4j", libraryPath);
+        SteamSharedLibraryLoader.loadLibrary("steam_api");
+        SteamSharedLibraryLoader.loadLibrary("steamworks4j");
 
         isNativeAPILoaded = true;
     }
