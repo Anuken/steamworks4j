@@ -1,7 +1,6 @@
 package com.codedisaster.steamworks;
 
 public abstract class SteamNativeHandle {
-
 	long handle;
 
 	SteamNativeHandle(long handle) {
@@ -16,6 +15,10 @@ public abstract class SteamNativeHandle {
 	 */
 	public static <T extends SteamNativeHandle> long getNativeHandle(T handle) {
 		return handle.handle;
+	}
+
+	public long handle(){
+		return handle;
 	}
 
 	@Override

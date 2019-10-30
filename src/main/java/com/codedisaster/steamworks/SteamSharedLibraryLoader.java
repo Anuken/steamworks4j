@@ -102,7 +102,7 @@ class SteamSharedLibraryLoader {
 			String librarySystemName = getPlatformLibName(libraryName);
 
 			File librarySystemPath = discoverExtractLocation(
-					SHARED_LIBRARY_EXTRACT_DIRECTORY + "/" + Version.getVersion(), librarySystemName);
+					SHARED_LIBRARY_EXTRACT_DIRECTORY + "/" + Steamworks4jVersion.getVersion(), librarySystemName);
 
 			if (libraryPath == null) {
 				// extract library from resource
