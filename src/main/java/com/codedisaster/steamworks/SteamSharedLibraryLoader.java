@@ -46,15 +46,19 @@ class SteamSharedLibraryLoader{
                     loadAllLibraries(file, true, libraryNames);
                     return;
                 }catch(Throwable t){
-                    firstException = t;
+                    if(firstException != null){
+                        firstException.addSuppressed(t);
+                    }else{
+                        firstException = t;
+                    }
                     //'non-valid win32 application' error
                     if(t.getMessage() != null && t.getMessage().contains("Win32")){
                         //try to load them again, but this time in 32-bit mode
                         try{
                             loadAllLibraries(file, false, libraryNames);
                             return;
-                        }catch(Throwable ignored){
-                            //didn't work, keep trying
+                        }catch(Throwable other){
+                            firstException.addSuppressed(other);
                         }
                     }
                 }
@@ -67,6 +71,7 @@ class SteamSharedLibraryLoader{
     }
 
     private static void loadAllLibraries(File file, boolean use64, String... libraryNames) throws Throwable{
+        if(true) throw new RuntimeException("BEANS");
         for(String lib : libraryNames){
             String libFilename = getPlatformLibName(lib, use64);
             File libFile = new File(file.getParentFile(), libFilename);
