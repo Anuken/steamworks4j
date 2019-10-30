@@ -1,13 +1,13 @@
 package com.codedisaster.steamworks;
 
-public interface SteamUserCallback {
+public interface SteamUserCallback{
 
-	void onValidateAuthTicket(SteamID steamID,
-							  SteamAuth.AuthSessionResponse authSessionResponse,
-							  SteamID ownerSteamID);
+    void onValidateAuthTicket(SteamID steamID,
+                              SteamAuth.AuthSessionResponse authSessionResponse,
+                              SteamID ownerSteamID);
 
-	void onMicroTxnAuthorization(int appID, long orderID, boolean authorized);
+    void onMicroTxnAuthorization(int appID, long orderID, boolean authorized);
 
-	void onEncryptedAppTicket(SteamResult result);
+    void onEncryptedAppTicket(SteamResult result);
 
 }

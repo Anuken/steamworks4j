@@ -1,12 +1,12 @@
 package com.codedisaster.steamworks;
 
-public class SteamAPICall extends SteamNativeHandle {
+public class SteamAPICall extends SteamNativeHandle{
 
-	SteamAPICall(long handle) {
-		super(handle);
-	}
+    SteamAPICall(long handle){
+        super(handle);
+    }
 
-	public boolean isValid() {
-		return handle != 0;
-	}
+    public boolean isValid(){
+        return handle != 0;
+    }
 }

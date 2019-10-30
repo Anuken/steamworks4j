@@ -6,31 +6,31 @@ sourceCompatibility = 1.8
 version = '1.0'
 group = 'com.github.Anuken'
 
-sourceSets.main.java.srcDirs = [ "src/main/java" ]
-sourceSets.main.resources.srcDirs = [ "src/main/resources" ]
+sourceSets.main.java.srcDirs = ["src/main/java"]
+sourceSets.main.resources.srcDirs = ["src/main/resources"]
 
-ext {
+ext{
 
 }
 
-repositories {
+repositories{
     mavenCentral()
- 	maven { 
- 		url "https://oss.sonatype.org/content/repositories/snapshots/"
- 	}
+    maven{
+        url "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
     jcenter()
 }
 
 
-task sourcesJar(type: Jar, dependsOn: classes) {
+task sourcesJar(type: Jar, dependsOn: classes){
     classifier = 'sources'
     from sourceSets.main.allSource
 }
 
-artifacts {
+artifacts{
     archives sourcesJar
 }
 
-dependencies {
+dependencies{
 
 }

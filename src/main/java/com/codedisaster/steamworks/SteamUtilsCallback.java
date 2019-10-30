@@ -1,7 +1,7 @@
 package com.codedisaster.steamworks;
 
-public interface SteamUtilsCallback {
+public interface SteamUtilsCallback{
 
-	void onSteamShutdown();
+    void onSteamShutdown();
 
 }

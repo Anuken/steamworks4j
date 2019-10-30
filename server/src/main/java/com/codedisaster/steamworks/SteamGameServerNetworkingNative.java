@@ -1,14 +1,14 @@
 package com.codedisaster.steamworks;
 
-class SteamGameServerNetworkingNative {
+class SteamGameServerNetworkingNative{
 
-	// @off
+    // @off
 
 	/*JNI
 		#include "SteamGameServerNetworkingCallback.h"
 	*/
 
-	static native long createCallback(Object javaCallback); /*
+    static native long createCallback(Object javaCallback); /*
 		return (intp) new SteamGameServerNetworkingCallback(env, javaCallback);
 	*/
 

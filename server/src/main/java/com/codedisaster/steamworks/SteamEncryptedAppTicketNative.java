@@ -1,18 +1,18 @@
 package com.codedisaster.steamworks;
 
-import java.nio.ByteBuffer;
+import java.nio.*;
 
-class SteamEncryptedAppTicketNative {
+class SteamEncryptedAppTicketNative{
 
-	// @off
+    // @off
 
 	/*JNI
 		#include <steamencryptedappticket.h>
 	*/
 
-	static native boolean decryptTicket(ByteBuffer ticketEncrypted, int encryptedOffset, int encryptedSize,
-										ByteBuffer ticketDecrypted, int decryptedOffset, int decryptedSize,
-										byte[] key, int keyLength, int[] decryptedLength); /*
+    static native boolean decryptTicket(ByteBuffer ticketEncrypted, int encryptedOffset, int encryptedSize,
+                                        ByteBuffer ticketDecrypted, int decryptedOffset, int decryptedSize,
+                                        byte[] key, int keyLength, int[] decryptedLength); /*
 
 		decryptedLength[0] = decryptedSize;
 
@@ -20,22 +20,22 @@ class SteamEncryptedAppTicketNative {
 			(uint8*) &ticketDecrypted[decryptedOffset], (uint32*) &decryptedLength[0], (uint8*) key, keyLength);
 	*/
 
-	static native boolean isTicketForApp(ByteBuffer ticketDecrypted,
-										 int bufferOffset, int bufferSize, int appID); /*
+    static native boolean isTicketForApp(ByteBuffer ticketDecrypted,
+                                         int bufferOffset, int bufferSize, int appID); /*
 
 		return SteamEncryptedAppTicket_BIsTicketForApp(
 			(uint8*) &ticketDecrypted[bufferOffset], bufferSize, (AppId_t) appID);
 	*/
 
-	static native int getTicketIssueTime(ByteBuffer ticketDecrypted,
-										 int bufferOffset, int bufferSize); /*
+    static native int getTicketIssueTime(ByteBuffer ticketDecrypted,
+                                         int bufferOffset, int bufferSize); /*
 
 		return SteamEncryptedAppTicket_GetTicketIssueTime(
 			(uint8*) &ticketDecrypted[bufferOffset], bufferSize);
 	*/
 
-	static native long getTicketSteamID(ByteBuffer ticketDecrypted,
-										int bufferOffset, int bufferSize); /*
+    static native long getTicketSteamID(ByteBuffer ticketDecrypted,
+                                        int bufferOffset, int bufferSize); /*
 
 		CSteamID steamID;
 
@@ -45,28 +45,28 @@ class SteamEncryptedAppTicketNative {
 		return (int64) steamID.ConvertToUint64();
 	*/
 
-	static native int getTicketAppID(ByteBuffer ticketDecrypted,
-									 int bufferOffset, int bufferSize); /*
+    static native int getTicketAppID(ByteBuffer ticketDecrypted,
+                                     int bufferOffset, int bufferSize); /*
 
 		return SteamEncryptedAppTicket_GetTicketAppID(
 			(uint8*) &ticketDecrypted[bufferOffset], bufferSize);
 	*/
 
-	static native boolean userOwnsAppInTicket(ByteBuffer ticketDecrypted,
-											  int bufferOffset, int bufferSize, int appID); /*
+    static native boolean userOwnsAppInTicket(ByteBuffer ticketDecrypted,
+                                              int bufferOffset, int bufferSize, int appID); /*
 		return SteamEncryptedAppTicket_BUserOwnsAppInTicket(
 			(uint8*) &ticketDecrypted[bufferOffset], bufferSize, (AppId_t) appID);
 	*/
 
-	static native boolean userIsVacBanned(ByteBuffer ticketDecrypted,
-										  int bufferOffset, int bufferSize); /*
+    static native boolean userIsVacBanned(ByteBuffer ticketDecrypted,
+                                          int bufferOffset, int bufferSize); /*
 
 		return SteamEncryptedAppTicket_BUserIsVacBanned(
 			(uint8*) &ticketDecrypted[bufferOffset], bufferSize);
 	*/
 
-	static native int getUserVariableData(ByteBuffer ticketDecrypted, int decryptedOffset, int decryptedSize,
-										  ByteBuffer userData, int userDataOffset, int userDataSize); /*
+    static native int getUserVariableData(ByteBuffer ticketDecrypted, int decryptedOffset, int decryptedSize,
+                                          ByteBuffer userData, int userDataOffset, int userDataSize); /*
 
 		uint32 size = 0;
 

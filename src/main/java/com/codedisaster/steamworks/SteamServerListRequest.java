@@ -1,13 +1,13 @@
 package com.codedisaster.steamworks;
 
-public class SteamServerListRequest extends SteamNativeHandle {
+public class SteamServerListRequest extends SteamNativeHandle{
 
-	SteamServerListRequest(long handle) {
-		super(handle);
-	}
+    SteamServerListRequest(long handle){
+        super(handle);
+    }
 
-	public boolean isValid() {
-		return handle != 0L;
-	}
+    public boolean isValid(){
+        return handle != 0L;
+    }
 
 }

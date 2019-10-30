@@ -1,15 +1,15 @@
 package com.codedisaster.steamworks;
 
-public class SteamAuthTicket extends SteamNativeHandle {
+public class SteamAuthTicket extends SteamNativeHandle{
 
-	static final long AuthTicketInvalid = 0;
+    static final long AuthTicketInvalid = 0;
 
-	SteamAuthTicket(long handle) {
-		super(handle);
-	}
+    SteamAuthTicket(long handle){
+        super(handle);
+    }
 
-	public boolean isValid() {
-		return handle != AuthTicketInvalid;
-	}
+    public boolean isValid(){
+        return handle != AuthTicketInvalid;
+    }
 
 }
