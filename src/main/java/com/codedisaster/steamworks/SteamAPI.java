@@ -19,9 +19,9 @@ public class SteamAPI{
 
         if(libraryPath == null && SteamSharedLibraryLoader.DEBUG){
             String sdkPath = SteamSharedLibraryLoader.getSdkRedistributableBinPath();
-            SteamSharedLibraryLoader.loadLibrary("steam_api", sdkPath);
+            //SteamSharedLibraryLoader.loadLibrary("steam_api", sdkPath);
         }else{
-            SteamSharedLibraryLoader.loadLibrary("steam_api", libraryPath);
+            //SteamSharedLibraryLoader.loadLibrary("steam_api", libraryPath);
         }
 
         SteamSharedLibraryLoader.loadLibrary("steamworks4j", libraryPath);
