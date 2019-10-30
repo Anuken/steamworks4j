@@ -57,7 +57,6 @@ class SteamSharedLibraryLoader{
                             //didn't work, keep trying
                         }
                     }
-                    //TODO handle 32-bit errors.
                 }
             }
         }
@@ -120,45 +119,37 @@ class SteamSharedLibraryLoader{
         }
     }
 
-    private static File discoverExtractLocation(String folderName, String fileName) throws IOException{
-        File[] paths = extractLocations(folderName, fileName);
-        for(File file : paths){
-            if(canWrite(file)){
-                return file;
-            }
-        }
-
-        throw new IOException("No suitable extraction path found");
-    }
-
     private static boolean canWrite(File file){
+        try{
+            File folder = file.getParentFile();
 
-        File folder = file.getParentFile();
-
-        if(file.exists()){
-            if(!file.canWrite() || !canExecute(file)){
-                return false;
-            }
-        }else{
-            if(!folder.exists()){
-                if(!folder.mkdirs()){
+            if(file.exists()){
+                if(!file.canWrite() || !canExecute(file)){
+                    return false;
+                }
+            }else{
+                if(!folder.exists()){
+                    if(!folder.mkdirs()){
+                        return false;
+                    }
+                }
+                if(!folder.isDirectory()){
                     return false;
                 }
             }
-            if(!folder.isDirectory()){
+
+            File testFile = new File(folder, UUID.randomUUID().toString());
+
+            try{
+                new FileOutputStream(testFile).close();
+                return canExecute(testFile);
+            }catch(IOException e){
                 return false;
+            }finally{
+                testFile.delete();
             }
-        }
-
-        File testFile = new File(folder, UUID.randomUUID().toString());
-
-        try{
-            new FileOutputStream(testFile).close();
-            return canExecute(testFile);
-        }catch(IOException e){
+        }catch(Throwable t){
             return false;
-        }finally{
-            testFile.delete();
         }
     }
 
