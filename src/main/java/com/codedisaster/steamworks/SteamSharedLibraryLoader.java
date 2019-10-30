@@ -71,9 +71,8 @@ class SteamSharedLibraryLoader{
     }
 
     private static void loadAllLibraries(File file, boolean use64, String... libraryNames) throws Throwable{
-        if(true) throw new RuntimeException("BEANS");
         for(String lib : libraryNames){
-            String libFilename = getPlatformLibName(lib, use64);
+            String libFilename = getPlatformLibName(lib, use64 || !lib.equals("steam_api"));
             File libFile = new File(file.getParentFile(), libFilename);
             extractLibrary(libFile, libFilename);
             System.load(libFile.getCanonicalPath());
