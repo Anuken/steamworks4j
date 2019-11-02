@@ -43,23 +43,13 @@ class SteamSharedLibraryLoader{
             if(canWrite(file)){
                 try{
                     //try to extract and load each file
-                    loadAllLibraries(file, true, libraryNames);
+                    loadAllLibraries(file, libraryNames);
                     return;
                 }catch(Throwable t){
                     if(firstException != null){
                         firstException.addSuppressed(t);
                     }else{
                         firstException = t;
-                    }
-                    //'non-valid win32 application' error
-                    if(t.getMessage() != null && t.getMessage().contains("Win32")){
-                        //try to load them again, but this time in 32-bit mode
-                        try{
-                            loadAllLibraries(file, false, libraryNames);
-                            return;
-                        }catch(Throwable other){
-                            firstException.addSuppressed(other);
-                        }
                     }
                 }
             }
@@ -70,9 +60,9 @@ class SteamSharedLibraryLoader{
         }
     }
 
-    private static void loadAllLibraries(File file, boolean use64, String... libraryNames) throws Throwable{
+    private static void loadAllLibraries(File file, String... libraryNames) throws Throwable{
         for(String lib : libraryNames){
-            String libFilename = getPlatformLibName(lib, use64 || !lib.equals("steam_api"));
+            String libFilename = getPlatformLibName(lib, true);
             File libFile = new File(file.getParentFile(), libFilename);
             extractLibrary(libFile, libFilename);
             System.load(libFile.getCanonicalPath());
