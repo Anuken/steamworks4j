@@ -40,17 +40,15 @@ class SteamSharedLibraryLoader{
     static void loadLibrary(String... libraryNames) throws SteamException{
         Throwable firstException = null;
         for(File file : extractLocations("steamworks4j_" + Steamworks4j.version, "out")){
-            if(canWrite(file)){
-                try{
-                    //try to extract and load each file
-                    loadAllLibraries(file, libraryNames);
-                    return;
-                }catch(Throwable t){
-                    if(firstException != null){
-                        firstException.addSuppressed(t);
-                    }else{
-                        firstException = t;
-                    }
+            try{
+                //try to extract and load each file
+                loadAllLibraries(file, libraryNames);
+                return;
+            }catch(Throwable t){
+                if(firstException != null){
+                    firstException.addSuppressed(t);
+                }else{
+                    firstException = t;
                 }
             }
         }
