@@ -55,9 +55,20 @@ class SteamSharedLibraryLoader{
             }
         }
 
-        if(firstException != null){
-            throw new SteamException(firstException);
+        try{
+            for(String name : libraryNames){
+                System.load(new File(getPlatformLibName(name, true)).getCanonicalPath());
+            }
+            return;
+        }catch(Throwable t){
+            if(firstException != null){
+                firstException.addSuppressed(t);
+            }else{
+                firstException = t;
+            }
         }
+
+        throw new SteamException(firstException);
     }
 
     private static void loadAllLibraries(File file, String... libraryNames) throws Throwable{
