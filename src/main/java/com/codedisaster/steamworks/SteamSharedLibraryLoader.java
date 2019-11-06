@@ -94,7 +94,6 @@ class SteamSharedLibraryLoader{
 
         out.add(new File(System.getProperty("user.home") + "/." + folderName, fileName));
         out.add(new File(".tmp/" + folderName, fileName));
-        out.add(new File(fileName));
 
         return out.toArray(new File[0]);
     }
