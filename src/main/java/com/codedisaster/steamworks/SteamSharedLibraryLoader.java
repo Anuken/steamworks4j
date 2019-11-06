@@ -41,6 +41,8 @@ class SteamSharedLibraryLoader{
         Throwable firstException = null;
         for(File file : extractLocations("steamworks4j_" + Steamworks4j.version, "out")){
             try{
+                //create folder and stuff
+                canWrite(file);
                 //try to extract and load each file
                 loadAllLibraries(file, libraryNames);
                 return;
