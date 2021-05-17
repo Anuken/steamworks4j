@@ -17,6 +17,7 @@ Makefile
 *.vcxproj
 *.vcxproj.*
 *.xcodeproj/
+.gradle/
 
 # IDE files
 .idea/
