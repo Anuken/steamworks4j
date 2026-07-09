@@ -11,7 +11,6 @@ obj/
 target/
 Makefile
 *.exp
-*.lib
 *.make
 *.sln
 *.vcxproj

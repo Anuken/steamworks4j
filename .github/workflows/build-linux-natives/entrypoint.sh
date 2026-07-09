@@ -37,4 +37,4 @@ apt-get -yq --force-yes install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf 
 apt-get -yq --force-yes install gcc-riscv64-linux-gnu g++-riscv64-linux-gnu libc6-dev-riscv64-cross
 
 # Build Linux natives
-./gradlew jnigenBuildLinux64
+./gradlew jnigenBuildAllLinux

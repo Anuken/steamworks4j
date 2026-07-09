@@ -49,12 +49,14 @@ jnigen{
     all{
         headerDirs = ["native/api", "native"]
         cppIncludes = ["native/*.cpp"]
+        linkerFlags += ["-L" + file("libs").absolutePath]
+        libraries += ["-lsteam_api"]
     }
     addLinux(x64, x86){
 
     }
     addWindows(x64, x86){
-
+        libraries += ["-L" + file("native/objects").absolutePath]
     }
     addMac(x64, x86){
 
