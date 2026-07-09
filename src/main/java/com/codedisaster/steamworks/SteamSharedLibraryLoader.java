@@ -5,7 +5,6 @@ import java.util.*;
 
 class SteamSharedLibraryLoader{
     private static final PLATFORM OS;
-    private static final boolean IS_64_BIT;
 
     static{
         String osName = System.getProperty("os.name");
@@ -20,14 +19,12 @@ class SteamSharedLibraryLoader{
         }else{
             throw new RuntimeException("Unknown host architecture: " + osName + ", " + osArch);
         }
-
-        IS_64_BIT = osArch.equals("amd64") || osArch.equals("x86_64");
     }
 
-    private static String getPlatformLibName(String libName, boolean use64){
+    private static String getPlatformLibName(String libName){
         switch(OS){
             case Windows:
-                return libName + (IS_64_BIT && use64 ? "64" : "") + ".dll";
+                return libName + "64.dll";
             case Linux:
                 return "lib" + libName + ".so";
             case MacOS:
@@ -57,7 +54,7 @@ class SteamSharedLibraryLoader{
 
         try{
             for(String name : libraryNames){
-                System.load(new File(getPlatformLibName(name, true)).getCanonicalPath());
+                System.load(new File(getPlatformLibName(name)).getCanonicalPath());
             }
             return;
         }catch(Throwable t){
@@ -73,7 +70,7 @@ class SteamSharedLibraryLoader{
 
     private static void loadAllLibraries(File file, String... libraryNames) throws Throwable{
         for(String lib : libraryNames){
-            String libFilename = getPlatformLibName(lib, true);
+            String libFilename = getPlatformLibName(lib);
             File libFile = new File(file.getParentFile(), libFilename);
             extractLibrary(libFile, libFilename);
             System.load(libFile.getCanonicalPath());

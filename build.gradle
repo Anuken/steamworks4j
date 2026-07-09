@@ -1,16 +1,17 @@
-apply plugin: 'java'
-apply plugin: 'maven'
+plugins{
+    id 'java-library'
+    id 'maven-publish'
+}
 
-
-sourceCompatibility = 1.8
 version = '1.0'
 group = 'com.github.Anuken'
 
 sourceSets.main.java.srcDirs = ["src/main/java"]
 sourceSets.main.resources.srcDirs = ["src/main/resources"]
 
-ext{
-
+tasks.withType(JavaCompile){
+    sourceCompatibility = 17
+    targetCompatibility = 17
 }
 
 repositories{
@@ -18,17 +19,14 @@ repositories{
     maven{
         url "https://oss.sonatype.org/content/repositories/snapshots/"
     }
-    jcenter()
 }
 
-
-task sourcesJar(type: Jar, dependsOn: classes){
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-artifacts{
-    archives sourcesJar
+publishing{
+    publications{
+        maven(MavenPublication){
+            from components.java
+        }
+    }
 }
 
 dependencies{
