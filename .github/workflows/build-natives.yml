@@ -20,12 +20,14 @@ jobs:
   build-linux:
     runs-on: ubuntu-22.04
     container:
-      image: ubuntu:18.04
+      image: ubuntu:20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install build dependencies
+        env:
+          DEBIAN_FRONTEND: noninteractive
         run: |
           apt-get update
           apt-get install -y --no-install-recommends \
@@ -65,6 +67,8 @@ jobs:
             "https://api.github.com/repos/${{ env.STEAMWORKS_SDK_REPO }}/releases/assets/${ASSET_ID}"
 
           unzip -q sdk.zip -d .
+          # This assumes the zip's top-level entry is "sdk/" (Valve's default layout),
+          # so it lands at repo root as ./sdk. Adjust here if your archive differs.
           test -d sdk
 
       - name: Build natives
@@ -125,6 +129,7 @@ jobs:
           Invoke-WebRequest -Uri $asset.url -Headers $binHeaders -OutFile sdk.zip
 
           Expand-Archive sdk.zip -DestinationPath .
+          # Assumes the zip's top-level entry is "sdk/", landing at repo root as .\sdk
 
       - name: Build natives
         working-directory: build-natives
@@ -151,8 +156,9 @@ jobs:
 
       - name: Install premake5
         run: |
-          curl -L -o premake5.zip "https://github.com/premake/premake-core/releases/download/v${{ env.PREMAKE_VERSION }}/premake-${{ env.PREMAKE_VERSION }}-macosx.zip"
-          unzip -q premake5.zip -d build-natives
+          curl -L -o premake5.tar.gz "https://github.com/premake/premake-core/releases/download/v${{ env.PREMAKE_VERSION }}/premake-${{ env.PREMAKE_VERSION }}-macosx.tar.gz"
+          mkdir -p build-natives
+          tar -xzf premake5.tar.gz -C build-natives
           chmod +x build-natives/premake5
 
       - name: Download Steamworks SDK
