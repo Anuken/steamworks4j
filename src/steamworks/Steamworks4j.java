@@ -1,5 +1,5 @@
 package steamworks;
 
 public final class Steamworks4j{
-    public static final String version = "shrimple-v2";
+    public static final String version = "shrimple-v1";
 }
