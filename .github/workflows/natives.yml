@@ -18,7 +18,7 @@ jobs:
       - name: Upload natives
         uses: actions/upload-artifact@v7
         with:
-          name: Steamworks Linux natives
+          name: Linux natives
           path: |
             build/natives
 

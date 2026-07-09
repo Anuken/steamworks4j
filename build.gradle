@@ -20,7 +20,7 @@ version = '1.0'
 group = 'com.github.Anuken'
 
 sourceSets.main.java.srcDirs = ["src"]
-sourceSets.main.resources.srcDirs = ["libs"]
+sourceSets.main.resources.srcDirs = ["libs", "native/api_libs"]
 
 tasks.withType(JavaCompile){
     sourceCompatibility = 17
@@ -47,21 +47,20 @@ jnigen{
     libsDir = "build/natives"
 
     all{
-        headerDirs = ["native/api", "native"]
+        headerDirs = ["native/include", "native/"]
         cppIncludes = ["native/*.cpp"]
-        linkerFlags += ["-L" + file("libs").absolutePath]
-        libraries += ["-lsteam_api"]
+        linkerFlags += ["-L" + file("native/api_libs").absolutePath]
     }
     addLinux(x64, x86){
-
+        libraries += ["-lsteam_api"]
     }
     addWindows(x64, x86){
-        libraries += ["-L" + file("native/objects").absolutePath]
+        libraries += ["-L" + file("native/objects").absolutePath, "-lsteam_api64"]
     }
     addMac(x64, x86){
-
+        libraries += ["-lsteam_api"]
     }
     addMac(x64, ARM){
-
+        libraries += ["-lsteam_api"]
     }
 }

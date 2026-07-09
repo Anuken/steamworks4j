@@ -22,6 +22,10 @@ class SteamSharedLibraryLoader{
     }
 
     private static String getPlatformLibName(String libName){
+        //note: there's a clash here between what jnigen and Steam use
+        //jnigen: always suffixed with -64 on 64-bit platforms (which is every desktop)
+        //steam: only suffixed with -64 on windows
+        //this loader uses steam-style naming
         switch(OS){
             case Windows:
                 return libName + "64.dll";
