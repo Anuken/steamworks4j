@@ -1,4 +1,5 @@
 #include "SteamCallbackAdapter.h"
+#include <string>
 
 SteamCallbackAdapter::SteamCallbackAdapter(JNIEnv* env, jobject callback) {
 	env->GetJavaVM(&m_vm);
@@ -53,7 +54,8 @@ void SteamCallbackAdapter::callVoidMethod(JNIEnv* env, const char* method, const
 	} else {
 		jmethodID methodID = env->GetMethodID(clazz, method, signature);
 		if (methodID == 0) {
-    	    env->ThrowNew(ex, "Couldn't retrieve callback method.");
+		  std::string errorMessage = std::string("Couldn't retrieve callback method: ") + method + " with signature: " + signature;
+    	    env->ThrowNew(ex, errorMessage.c_str());
 		} else {
 			va_list args;
 			va_start(args, signature);

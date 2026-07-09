@@ -7,10 +7,6 @@ class SteamUserStatsCallbackAdapter extends SteamCallbackAdapter<SteamUserStatsC
         super(callback);
     }
 
-    void onUserStatsReceived(long gameId, long steamIDUser, int result){
-        callback.onUserStatsReceived(gameId, new SteamID(steamIDUser), SteamResult.byValue(result));
-    }
-
     void onUserStatsStored(long gameId, int result){
         callback.onUserStatsStored(gameId, SteamResult.byValue(result));
     }

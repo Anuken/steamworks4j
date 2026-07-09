@@ -5,7 +5,7 @@ public interface SteamFriendsCallback{
     default void onPersonaStateChange(SteamID steamID, SteamFriends.PersonaChange change){
     }
 
-    default void onGameOverlayActivated(boolean active){
+    default void onGameOverlayActivated(boolean active, boolean userInitiated, int appID){
     }
 
     default void onGameLobbyJoinRequested(SteamID steamIDLobby, SteamID steamIDFriend){

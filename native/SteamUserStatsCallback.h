@@ -9,7 +9,6 @@ public:
     SteamUserStatsCallback(JNIEnv* env, jobject callback);
     ~SteamUserStatsCallback();
 
-    STEAM_CALLBACK(SteamUserStatsCallback, onUserStatsReceived, UserStatsReceived_t, m_CallbackUserStatsReceived);
     STEAM_CALLBACK(SteamUserStatsCallback, onUserStatsStored, UserStatsStored_t, m_CallbackUserStatsStored);
     STEAM_CALLBACK(SteamUserStatsCallback, onUserStatsUnloaded, UserStatsUnloaded_t, m_CallbackUserStatsUnloaded);
     STEAM_CALLBACK(SteamUserStatsCallback, onUserAchievementStored, UserAchievementStored_t, m_CallbackUserAchievementStored);

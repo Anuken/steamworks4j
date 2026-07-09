@@ -2,8 +2,6 @@ package steamworks;
 
 public interface SteamUserStatsCallback{
 
-    default void onUserStatsReceived(long gameId, SteamID steamIDUser, SteamResult result){
-    }
 
     default void onUserStatsStored(long gameId, SteamResult result){
     }
