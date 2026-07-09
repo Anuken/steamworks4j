@@ -36,14 +36,8 @@ jobs:
             ca-certificates \
             unzip \
             jq \
-            git
-
-      - name: Install premake5
-        run: |
-          curl -L -o premake5.tar.gz "https://github.com/premake/premake-core/releases/download/v${{ env.PREMAKE_VERSION }}/premake-${{ env.PREMAKE_VERSION }}-linux.tar.gz"
-          tar -xzf premake5.tar.gz
-          mv premake5 /usr/local/bin/premake5
-          chmod +x /usr/local/bin/premake5
+            git \
+            premake4
 
       - name: Download Steamworks SDK
         env:
@@ -67,8 +61,6 @@ jobs:
             "https://api.github.com/repos/${{ env.STEAMWORKS_SDK_REPO }}/releases/assets/${ASSET_ID}"
 
           unzip -q sdk.zip -d .
-          # This assumes the zip's top-level entry is "sdk/" (Valve's default layout),
-          # so it lands at repo root as ./sdk. Adjust here if your archive differs.
           test -d sdk
 
       - name: Build natives

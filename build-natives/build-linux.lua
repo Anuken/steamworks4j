@@ -1,85 +1,83 @@
 solution "steamworks4j"
-	configurations { "release" }
-	platforms { "x64" }
+  configurations { "release" }
+  platforms { "x64" }
+  targetdir "."
 
-	buildoptions {
-		"-std=c++11",
-		"-Wall"
-	}
+  buildoptions {
+   "-std=c++11",
+   "-Wall"
+  }
 
-	includedirs {
-		"../src/main/native/include/jni",
-		"../src/main/native/include/jni/linux",
-		"../sdk/public/steam"
-	}
+  includedirs {
+   "../src/main/native/include/jni",
+   "../src/main/native/include/jni/linux",
+   "../sdk/public/steam"
+  }
 
-	defines {
-		"NDEBUG",
-		"LINUX"
-	}
+  defines {
+   "NDEBUG",
+   "LINUX"
+  }
 
-	optimize "On"
+  flags { "Optimize" }
 
-	project "steamworks4j"
+  project "steamworks4j"
+   kind "SharedLib"
+   language "C++"
 
-		kind "SharedLib"
-		language "C++"
+   files {
+    "../src/main/native/**.cpp"
+   }
 
-		files {
-			"../src/main/native/**.cpp"
-		}
+   includedirs {
+    "../src/main/native",
+   }
 
-		includedirs {
-			"../src/main/native",
-		}
+   libdirs {
+    "../sdk/redistributable_bin/linux64"
+   }
+   links {
+    "steam_api"
+   }
 
-        libdirs {
-            "../sdk/redistributable_bin/linux64"
-        }
-        links {
-            "steam_api"
-        }
+  project "steamworks4j-server"
+   kind "SharedLib"
+   language "C++"
 
-	project "steamworks4j-server"
+   files {
+    "../server/src/main/native/**.cpp"
+   }
 
-		kind "SharedLib"
-		language "C++"
+   excludes {
+    "../server/src/main/native/**EncryptedAppTicket*.cpp"
+   }
 
-		files {
-			"../server/src/main/native/**.cpp"
-		}
+   includedirs {
+    "../server/src/main/native",
+   }
 
-		excludes {
-			"../server/src/main/native/**EncryptedAppTicket*.cpp"
-		}
+   libdirs {
+    "../sdk/redistributable_bin/linux64"
+   }
+   links {
+    "steam_api"
+   }
 
-		includedirs {
-			"../server/src/main/native",
-		}
+  project "steamworks4j-encryptedappticket"
+   kind "SharedLib"
+   language "C++"
 
-        libdirs {
-            "../sdk/redistributable_bin/linux64"
-        }
-        links {
-            "steam_api"
-        }
+   files {
+    "../server/src/main/native/**EncryptedAppTicket*.cpp"
+   }
 
-	project "steamworks4j-encryptedappticket"
+   includedirs {
+    "../server/src/main/native",
+   }
 
-		kind "SharedLib"
-		language "C++"
-
-		files {
-			"../server/src/main/native/**EncryptedAppTicket*.cpp"
-		}
-
-		includedirs {
-			"../server/src/main/native",
-		}
-
-        libdirs {
-            "../sdk/public/steam/lib/linux64"
-        }
-        links {
-            "sdkencryptedappticket"
-        }
+   libdirs {
+    "../sdk/public/steam/lib/linux64"
+   }
+   links {
+    "sdkencryptedappticket"
+   }
