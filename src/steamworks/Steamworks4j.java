@@ -1,5 +1,5 @@
 package steamworks;
 
 public final class Steamworks4j{
-    public static final String version = "1.0-Anuken";
+    public static final String version = "shrimple-v1";
 }
