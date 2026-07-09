@@ -1,13 +1,26 @@
+buildscript{
+    repositories{
+        mavenCentral()
+        maven{ url = 'https://jitpack.io' }
+    }
+
+    dependencies{
+        classpath "com.badlogicgames.jnigen:jnigen-gradle:3.1.1"
+    }
+}
+
 plugins{
     id 'java-library'
     id 'maven-publish'
 }
 
+apply plugin: "com.badlogicgames.jnigen.jnigen-gradle"
+
 version = '1.0'
 group = 'com.github.Anuken'
 
-sourceSets.main.java.srcDirs = ["src/main/java"]
-sourceSets.main.resources.srcDirs = ["src/main/resources"]
+sourceSets.main.java.srcDirs = ["src"]
+sourceSets.main.resources.srcDirs = ["libs"]
 
 tasks.withType(JavaCompile){
     sourceCompatibility = 17
@@ -29,6 +42,24 @@ publishing{
     }
 }
 
-dependencies{
+jnigen{
+    sharedLibName = "steamworks4j"
+    libsDir = "build/natives"
 
+    all{
+        headerDirs = ["native/api", "native"]
+        cppIncludes = ["native/*.cpp"]
+    }
+    addLinux(x64, x86){
+
+    }
+    addWindows(x64, x86){
+
+    }
+    addMac(x64, x86){
+
+    }
+    addMac(x64, ARM){
+
+    }
 }
