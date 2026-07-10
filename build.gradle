@@ -49,21 +49,16 @@ jnigen{
     all{
         headerDirs = ["native/include", "native/"]
         cppIncludes = ["native/*.cpp"]
-    }
-    addLinux(x64, x86){
-        linkerFlags += ["-L" + file("native/api_libs").absolutePath]
-        libraries += ["-lsteam_api"]
+        if(it.os != Windows){
+            linkerFlags += ["-L" + file("native/api_libs").absolutePath]
+            libraries += ["-lsteam_api"]
+        }
     }
     addWindows(x64, x86, MSVC){
         linkerFlags += ["/LIBPATH:" + file("native/objects").absolutePath]
         libraries += ["steam_api64.lib"]
     }
-    addMac(x64, x86){
-        linkerFlags += ["-L" + file("native/api_libs").absolutePath]
-        libraries += ["-lsteam_api"]
-    }
-    addMac(x64, ARM){
-        linkerFlags += ["-L" + file("native/api_libs").absolutePath]
-        libraries += ["-lsteam_api"]
-    }
+    addLinux(x64, x86){}
+    addMac(x64, x86){}
+    addMac(x64, ARM){}
 }
