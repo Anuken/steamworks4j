@@ -35,7 +35,7 @@ jobs:
         run: sudo apt install g++-mingw-w64 g++-mingw-w64-x86-64 gcc-mingw-w64 gcc-mingw-w64-i686 gcc-mingw-w64-x86-64
       - name: Build natives
         run: |
-          ./gradlew jnigenBuildAllWindows
+          ./gradlew jnigenBuildAllWindows --no-daemon
       - name: Upload natives
         uses: actions/upload-artifact@v7
         with:
@@ -55,8 +55,8 @@ jobs:
         env:
           MACOSX_DEPLOYMENT_TARGET: '10.9'
         run: |
-          ./gradlew jnigenBuildAllMacOsX
-          lipo -create build/natives/macosx64/libfrogworks64.dylib build/natives/macosx64/libfrogworksarm64.dylib -output build/natives/libfrogworks64.dylib
+          ./gradlew jnigenBuildAllMacOsX --no-daemon
+          lipo -create build/natives/macosx64/libfrogworks64.dylib build/natives/macosxarm64/libfrogworksarm64.dylib -output build/natives/libfrogworks64.dylib
       - name: Upload natives
         uses: actions/upload-artifact@v7
         with:
