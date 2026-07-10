@@ -54,7 +54,8 @@ jnigen{
         linkerFlags += ["-L" + file("native/api_libs").absolutePath, "-lsteam_api"]
     }
     addWindows(x64, x86, MSVC){
-        libraries += ["/LIBPATH:" + file("native/objects").absolutePath, "native/objects/steam_api64.lib"]
+        linkerFlags += ["/LIBPATH:" + file("native/objects").absolutePath]
+        libraries += ["steam_api64.lib"]
     }
     addMac(x64, x86){
         linkerFlags += ["-L" + file("native/api_libs").absolutePath, "-lsteam_api"]
