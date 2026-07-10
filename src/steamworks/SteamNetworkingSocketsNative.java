@@ -76,6 +76,17 @@ final class SteamNetworkingSocketsNative{
         return SteamNetworkingSockets()->FlushMessagesOnConnection(connectionHandle);
     */
 
+    public static native boolean setConnectionConfigValueInt32(int netConnectionHandle, int configValue, int value);/*
+        int32_t v = value;
+        return SteamNetworkingUtils()->SetConfigValue(
+            (ESteamNetworkingConfigValue) configValue,
+            k_ESteamNetworkingConfig_Connection,
+            (intptr_t) netConnectionHandle,
+            k_ESteamNetworkingConfig_Int32,
+            &v
+        );
+    */
+
     public static native void enableSymmetricConnect();/*
         int32_t v = 1;
         SteamNetworkingUtils()->SetConfigValue(
@@ -85,5 +96,46 @@ final class SteamNetworkingSocketsNative{
             k_ESteamNetworkingConfig_Int32,
             &v
         );
+    */
+
+    // Packs SteamNetConnectionRealTimeStatus_t (minus per-lane data) into `data` starting at `offset`.
+    // Layout (native byte order), 52 bytes total:
+    //   0  int32  eState
+    //   4  int32  nPing
+    //   8  float  flConnectionQualityLocal
+    //  12  float  flConnectionQualityRemote
+    //  16  float  flOutPacketsPerSec
+    //  20  float  flOutBytesPerSec
+    //  24  float  flInPacketsPerSec
+    //  28  float  flInBytesPerSec
+    //  32  int32  nSendRateBytesPerSecond
+    //  36  int32  cbPendingUnreliable
+    //  40  int32  cbPendingReliable
+    //  44  int32  cbSentUnackedReliable
+    //  48  int32  (reserved/padding, currently unused)
+    // Returns the EResult from the native call; buffer is only written on k_EResultOK.
+    public static native int getConnectionRealTimeStatus(int netConnectionHandle, ByteBuffer data, int offset); /*
+        SteamNetConnectionRealTimeStatus_t status;
+        EResult result = SteamNetworkingSockets()->GetConnectionRealTimeStatus(
+            (HSteamNetConnection) netConnectionHandle, &status, 0, NULL);
+
+        if(result == k_EResultOK){
+            char* out = (char*)&data[offset];
+            int32_t state = (int32_t) status.m_eState;
+            memcpy(out + 0,  &state,                              4);
+            memcpy(out + 4,  &status.m_nPing,                     4);
+            memcpy(out + 8,  &status.m_flConnectionQualityLocal,  4);
+            memcpy(out + 12, &status.m_flConnectionQualityRemote, 4);
+            memcpy(out + 16, &status.m_flOutPacketsPerSec,        4);
+            memcpy(out + 20, &status.m_flOutBytesPerSec,          4);
+            memcpy(out + 24, &status.m_flInPacketsPerSec,         4);
+            memcpy(out + 28, &status.m_flInBytesPerSec,           4);
+            memcpy(out + 32, &status.m_nSendRateBytesPerSecond,   4);
+            memcpy(out + 36, &status.m_cbPendingUnreliable,       4);
+            memcpy(out + 40, &status.m_cbPendingReliable,         4);
+            memcpy(out + 44, &status.m_cbSentUnackedReliable,     4);
+        }
+
+        return result;
     */
 }

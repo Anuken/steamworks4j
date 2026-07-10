@@ -416,10 +416,82 @@ public class SteamNetworkingSockets extends SteamInterface{
     }
 
     /**
+     * Sets a connection-scoped Int32 config value, e.g. k_ESteamNetworkingConfig_SendRateMin / SendRateMax.
+     * @param configValue the ESteamNetworkingConfigValue ID from {@link SteamNetworkingConfigValue}.
+     */
+    public boolean setConnectionConfigValue(Connection connection, int configValue, int value){
+        return SteamNetworkingSocketsNative.setConnectionConfigValueInt32(connection.handle, configValue, value);
+    }
+
+    /**
      * Helper method to globally enable k_ESteamNetworkingConfig_SymmetricConnect
      * Useful to avoid split brain scenarios for P2P matchmaking
      */
     public void enableSymmetricConnect(){
         SteamNetworkingSocketsNative.enableSymmetricConnect();
     }
+
+    /** Snapshot of a connection's real-time send/recv state. See GetConnectionRealTimeStatus. */
+    public static final class RealTimeStatus{
+        public final ConnectionState state;
+        public final int pingMs;
+        public final float connectionQualityLocal, connectionQualityRemote;
+        public final float outPacketsPerSec, outBytesPerSec;
+        public final float inPacketsPerSec, inBytesPerSec;
+        public final int sendRateBytesPerSecond;
+        public final int pendingUnreliableBytes, pendingReliableBytes, sentUnackedReliableBytes;
+
+        RealTimeStatus(ByteBuffer b){
+            state = ConnectionState.byValue(b.getInt());
+            pingMs = b.getInt();
+            connectionQualityLocal = b.getFloat();
+            connectionQualityRemote = b.getFloat();
+            outPacketsPerSec = b.getFloat();
+            outBytesPerSec = b.getFloat();
+            inPacketsPerSec = b.getFloat();
+            inBytesPerSec = b.getFloat();
+            sendRateBytesPerSecond = b.getInt();
+            pendingUnreliableBytes = b.getInt();
+            pendingReliableBytes = b.getInt();
+            sentUnackedReliableBytes = b.getInt();
+        }
+
+        @Override
+        public String toString(){
+            return "RealTimeStatus{" +
+            "state=" + state +
+            ", pingMs=" + pingMs +
+            ", connectionQualityLocal=" + connectionQualityLocal +
+            ", connectionQualityRemote=" + connectionQualityRemote +
+            ", outPacketsPerSec=" + outPacketsPerSec +
+            ", outBytesPerSec=" + outBytesPerSec +
+            ", inPacketsPerSec=" + inPacketsPerSec +
+            ", inBytesPerSec=" + inBytesPerSec +
+            ", sendRateBytesPerSecond=" + sendRateBytesPerSecond +
+            ", pendingUnreliableBytes=" + pendingUnreliableBytes +
+            ", pendingReliableBytes=" + pendingReliableBytes +
+            ", sentUnackedReliableBytes=" + sentUnackedReliableBytes +
+            '}';
+        }
+    }
+
+    //reused scratch buffer for status queries; must be direct + native byte order for the native side's memcpy to line up
+    private static final ByteBuffer statusBuffer = ByteBuffer.allocateDirect(64).order(ByteOrder.nativeOrder());
+
+    /**
+     * Fetches real-time send/recv stats for a connection (queue depth, current send rate, ping, etc).
+     * Useful for driving flow control decisions instead of just reacting to k_EResultLimitExceeded after the fact.
+     * @return the status, or null if the connection handle was invalid / call did not return k_EResultOK.
+     */
+    public RealTimeStatus getConnectionRealTimeStatus(Connection connection){
+        synchronized(statusBuffer){
+            statusBuffer.clear();
+            int result = SteamNetworkingSocketsNative.getConnectionRealTimeStatus(connection.handle, statusBuffer, 0);
+            if(SteamResult.byValue(result) != SteamResult.OK) return null;
+
+            statusBuffer.position(0);
+            return new RealTimeStatus(statusBuffer);
+        }
+    }
+
 }
