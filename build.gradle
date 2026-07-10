@@ -54,7 +54,7 @@ jnigen{
     addLinux(x64, x86){
         libraries += ["-lsteam_api"]
     }
-    addWindows(x64, x86){
+    addWindows(x64, x86, MSVC){
         libraries += ["-L" + file("native/objects").absolutePath, "-lsteam_api64"]
     }
     addMac(x64, x86){

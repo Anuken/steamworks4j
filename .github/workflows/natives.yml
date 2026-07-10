@@ -23,7 +23,7 @@ jobs:
             build/natives
 
   natives-windows:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v6
       - name: Set up JDK 17
@@ -31,11 +31,13 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 17
-      - name: Install dependencies
-        run: sudo apt install g++-mingw-w64 g++-mingw-w64-x86-64 gcc-mingw-w64 gcc-mingw-w64-i686 gcc-mingw-w64-x86-64
+      - name: Set up MSVC dev environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
       - name: Build natives
-        run: |
-          ./gradlew jnigenBuildAllWindows --no-daemon
+        shell: cmd
+        run: gradlew.bat jnigenBuildAllWindows --no-daemon
       - name: Upload natives
         uses: actions/upload-artifact@v7
         with:
