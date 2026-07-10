@@ -43,7 +43,7 @@ publishing{
 }
 
 jnigen{
-    sharedLibName = "steamworks4j"
+    sharedLibName = "frogworks"
     libsDir = "build/natives"
 
     all{

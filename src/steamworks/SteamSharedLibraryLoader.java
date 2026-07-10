@@ -40,7 +40,7 @@ class SteamSharedLibraryLoader{
 
     static void loadLibrary(String... libraryNames) throws SteamException{
         Throwable firstException = null;
-        for(File file : extractLocations("steamworks4j_" + Steamworks4j.version, "out")){
+        for(File file : extractLocations("frogworks_" + Steamworks.version, "out")){
             try{
                 //create folder and stuff
                 canWrite(file);

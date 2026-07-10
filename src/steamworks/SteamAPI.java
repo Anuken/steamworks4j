@@ -13,7 +13,7 @@ public class SteamAPI{
         }
 
         SteamSharedLibraryLoader.loadLibrary("steam_api");
-        SteamSharedLibraryLoader.loadLibrary("steamworks4j");
+        SteamSharedLibraryLoader.loadLibrary("frogworks");
 
         isNativeAPILoaded = true;
     }
