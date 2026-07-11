@@ -58,7 +58,6 @@ jnigen{
         libraries += ["steam_api64.lib"]
     }
     addLinux(x64, x86)
-    addLinux(x64, ARM)
     addMac(x64, x86)
     addMac(x64, ARM)
 }

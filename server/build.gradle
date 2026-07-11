@@ -1,5 +1,5 @@
 sourceSets.main.java.srcDirs = ["src"]
-sourceSets.main.resources.srcDirs = ["libs", "native/api_libs"]
+sourceSets.main.resources.srcDirs = ["libs", "native/api_libs", "../native/api_libs"]
 
 dependencies{
     implementation project(":")
@@ -13,16 +13,15 @@ jnigen{
         headerDirs = ["../native/include", "native/"]
         cppIncludes = ["native/*.cpp"]
         if(it.os != Windows){
-            linkerFlags += ["-L" + file("../native/api_libs").absolutePath]
+            linkerFlags += ["-L" + file("../native/api_libs").absolutePath, "-L" + file("native/api_libs").absolutePath]
             libraries += ["-lsteam_api"]
         }
     }
     addWindows(x64, x86, MSVC){
-        linkerFlags += ["/LIBPATH:" + file("../native/objects").absolutePath]
+        linkerFlags += ["/LIBPATH:" + file("../native/objects").absolutePath, "/LIBPATH:" + file("native/objects").absolutePath]
         libraries += ["steam_api64.lib"]
     }
     addLinux(x64, x86)
-    addLinux(x64, ARM)
     addMac(x64, x86)
     addMac(x64, ARM)
 }
