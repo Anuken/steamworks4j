@@ -66,7 +66,7 @@ jobs:
           MACOSX_DEPLOYMENT_TARGET: '10.9'
         run: |
           ./gradlew server:jnigenBuildAllMacOsX --no-daemon
-          lipo -create build/natives/macosx64/libfrogworks64.dylib build/natives/macosxarm64/libfrogworksarm64.dylib -output build/natives/libfrogworks64.dylib
+          lipo -create server/build/natives/macosx64/libfrogworks64.dylib server/build/natives/macosxarm64/libfrogworksarm64.dylib -output server/build/natives/libfrogworks64.dylib
       - name: Upload natives
         uses: actions/upload-artifact@v7
         with:
