@@ -14,12 +14,12 @@ jnigen{
         cppIncludes = ["native/*.cpp"]
         if(it.os != Windows){
             linkerFlags += ["-L" + file("../native/api_libs").absolutePath, "-L" + file("native/api_libs").absolutePath]
-            libraries += ["-lsteam_api"]
+            libraries += ["-lsteam_api", "-lsdkencryptedappticket"]
         }
     }
     addWindows(x64, x86, MSVC){
         linkerFlags += ["/LIBPATH:" + file("../native/objects").absolutePath, "/LIBPATH:" + file("native/objects").absolutePath]
-        libraries += ["steam_api64.lib"]
+        libraries += ["steam_api64.lib", "sdkencryptedappticket64.lib"]
     }
     addLinux(x64, x86)
     addMac(x64, x86)
