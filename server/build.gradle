@@ -1,5 +1,5 @@
 sourceSets.main.java.srcDirs = ["src"]
-sourceSets.main.resources.srcDirs = ["libs", "native/api_libs", "../native/api_libs"]
+sourceSets.main.resources.srcDirs = ["libs", "native/api_libs"]
 
 dependencies{
     implementation project(":")
