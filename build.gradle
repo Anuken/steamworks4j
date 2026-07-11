@@ -9,38 +9,37 @@ buildscript{
     }
 }
 
-plugins{
-    id 'java-library'
-    id 'maven-publish'
-}
-
-apply plugin: "com.badlogicgames.jnigen.jnigen-gradle"
-
-version = '1.0'
-group = 'com.github.Anuken'
-
-sourceSets.main.java.srcDirs = ["src"]
-sourceSets.main.resources.srcDirs = ["libs", "native/api_libs"]
-
-tasks.withType(JavaCompile){
-    sourceCompatibility = 17
-    targetCompatibility = 17
-}
-
-repositories{
-    mavenCentral()
-    maven{
-        url "https://oss.sonatype.org/content/repositories/snapshots/"
+allprojects{
+    repositories{
+        mavenCentral()
+        maven{
+            url "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
     }
-}
 
-publishing{
-    publications{
-        maven(MavenPublication){
-            from components.java
+    apply plugin: "java-library"
+    apply plugin: 'maven-publish'
+    apply plugin: "com.badlogicgames.jnigen.jnigen-gradle"
+
+    group = 'com.github.Anuken'
+    version = '1.0'
+
+    tasks.withType(JavaCompile){
+        sourceCompatibility = 17
+        targetCompatibility = 17
+    }
+
+    publishing{
+        publications{
+            maven(MavenPublication){
+                from components.java
+            }
         }
     }
 }
+
+sourceSets.main.java.srcDirs = ["src"]
+sourceSets.main.resources.srcDirs = ["libs", "native/api_libs"]
 
 jnigen{
     sharedLibName = "frogworks"

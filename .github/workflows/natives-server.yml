@@ -1,0 +1,75 @@
+name: Build Server Natives
+
+on: [workflow_dispatch]
+
+jobs:
+  natives-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          submodules: 'recursive'
+
+      - name: Build Linux Natives in Docker Container
+        uses: ./.github/workflows/build-linux-natives-server
+        id: docker
+
+      - name: Upload natives
+        uses: actions/upload-artifact@v7
+        with:
+          name: Linux natives
+          path: |
+            server/build/natives
+
+  natives-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: 17
+      - uses: TheMrMilchmann/setup-msvc-dev@v4
+        with:
+          arch: x64
+      - name: Add vcvarsall.bat to PATH
+        shell: pwsh
+        run: |
+          $vsPath = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" `
+            -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
+            -property installationPath
+          $buildToolsPath = Join-Path $vsPath "VC\Auxiliary\Build"
+          echo "$buildToolsPath" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Build natives
+        shell: cmd
+        run: gradlew.bat server:jnigenBuildAllWindows --no-daemon
+      - name: Upload natives
+        uses: actions/upload-artifact@v7
+        with:
+          name: Windows natives
+          path: |
+            server/build/natives
+  natives-mac:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: 17
+      - name: Build natives
+        env:
+          MACOSX_DEPLOYMENT_TARGET: '10.9'
+        run: |
+          ./gradlew server:jnigenBuildAllMacOsX --no-daemon
+          lipo -create build/natives/macosx64/libfrogworks64.dylib build/natives/macosxarm64/libfrogworksarm64.dylib -output build/natives/libfrogworks64.dylib
+      - name: Upload natives
+        uses: actions/upload-artifact@v7
+        with:
+          name: MacOS natives
+          path: |
+            server/build/natives
