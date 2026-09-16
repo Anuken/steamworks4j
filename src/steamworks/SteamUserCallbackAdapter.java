@@ -1,10 +1,13 @@
 package steamworks;
 
-@SuppressWarnings("unused")
 class SteamUserCallbackAdapter extends SteamCallbackAdapter<SteamUserCallback>{
 
     SteamUserCallbackAdapter(SteamUserCallback callback){
         super(callback);
+    }
+
+    void onAuthSessionTicket(long authTicket, int result){
+        callback.onAuthSessionTicket(new SteamAuthTicket(authTicket), SteamResult.byValue(result));
     }
 
     void onValidateAuthTicket(long steamID, int authSessionResponse, long ownerSteamID){
@@ -14,6 +17,10 @@ class SteamUserCallbackAdapter extends SteamCallbackAdapter<SteamUserCallback>{
 
     void onMicroTxnAuthorization(int appID, long orderID, boolean authorized){
         callback.onMicroTxnAuthorization(appID, orderID, authorized);
+    }
+
+    void onGetTicketForWebApi(long authTicket, int result, byte[] ticket){
+        callback.onGetTicketForWebApi(new SteamAuthTicket(authTicket), SteamResult.byValue(result), ticket);
     }
 
     void onEncryptedAppTicket(int result){
